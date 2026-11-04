@@ -51,3 +51,17 @@ Deploy tay không qua CI:
 - `GET /` – hello
 - `GET /health` – health check
 - `GET /items`, `POST /items`, `GET /items/{id}`, `DELETE /items/{id}`
+- Ảnh trên S3 (bucket `hieunq92`, prefix `images/`):
+  - `POST /images` – upload (form-data field `file`, chỉ nhận jpeg/png/gif/webp/svg, tối đa 10MB)
+  - `GET /images` – danh sách ảnh
+  - `GET /images/{id}` – tải ảnh về
+  - `DELETE /images/{id}` – xoá ảnh
+
+```bash
+curl -F "file=@cat.png" http://localhost:4747/images
+curl -o cat.png http://localhost:4747/images/<id>
+```
+
+Cấu hình qua biến môi trường: `S3_BUCKET`, `S3_PREFIX`, `AWS_REGION`, `MAX_IMAGE_SIZE_MB`.
+Endpoint S3 lấy từ `AWS_ENDPOINT_URL` — container ECS trong Floci đã có sẵn `http://floci:4566`;
+chạy local thì `export AWS_ENDPOINT_URL=http://localhost:4566 AWS_ACCESS_KEY_ID=test AWS_SECRET_ACCESS_KEY=test`.

@@ -1,12 +1,13 @@
 from fastapi import FastAPI
 
 from app.config import get_settings
-from app.routers import items
+from app.routers import images, items
 
 settings = get_settings()
 
 app = FastAPI(title=settings.app_name, version=settings.app_version)
 app.include_router(items.router)
+app.include_router(images.router)
 
 
 @app.get("/", tags=["root"])

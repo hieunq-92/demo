@@ -3,3 +3,4 @@ pytest==8.3.5
 pytest-cov==6.1.1
 httpx==0.28.1
 ruff==0.11.8
+moto[s3]==5.1.4

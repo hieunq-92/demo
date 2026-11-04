@@ -57,7 +57,9 @@ curl -s -o /dev/null --max-time 5 "$ENDPOINT/" \
   || die "Khong goi duoc Floci tai $ENDPOINT. Floci da chay chua (docker compose up -d)?"
 
 # ---- 1. Build image ----
-IMAGE="$FAMILY:$IMAGE_TAG"
+# Ten image Docker bat buoc chu thuong (family ECS thi khong)
+IMAGE_NAME="${IMAGE_NAME:-$(echo "$FAMILY" | tr '[:upper:]' '[:lower:]')}"
+IMAGE="$IMAGE_NAME:$IMAGE_TAG"
 step "Build image $IMAGE"
 docker build -t "$IMAGE" "$ROOT"
 
@@ -185,5 +187,5 @@ if [ -n "${GITHUB_STEP_SUMMARY:-}" ]; then
 fi
 
 # ---- 9. Don image cu (giu 5 ban moi nhat) ----
-docker images "$FAMILY" --format '{{.Repository}}:{{.Tag}}' | tr -d '\r' | tail -n +6 |
+docker images "$IMAGE_NAME" --format '{{.Repository}}:{{.Tag}}' | tr -d '\r' | tail -n +6 |
   while read -r img; do docker rmi "$img" >/dev/null 2>&1 || true; done

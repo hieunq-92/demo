@@ -1,0 +1,2 @@
+# Script bash phai giu LF, ke ca khi checkout tren Windows
+*.sh text eol=lf

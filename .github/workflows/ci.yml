@@ -1,0 +1,57 @@
+name: CI/CD - Floci
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+
+# Khong cho 2 lan deploy chay chong nhau
+concurrency:
+  group: floci-deploy
+  cancel-in-progress: false
+
+jobs:
+  test:
+    name: Lint + test
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+
+      - name: Cai dependencies
+        run: |
+          pip install -r requirements.txt
+          if [ -f requirements-dev.txt ]; then pip install -r requirements-dev.txt; fi
+          pip install ruff pytest httpx
+
+      - name: Lint (ruff)
+        run: ruff check .
+
+      - name: Test (pytest)
+        run: |
+          if ls tests/test_*.py >/dev/null 2>&1; then python -m pytest -q; else echo "Khong co test, bo qua"; fi
+
+      - name: Kiem tra app import duoc
+        run: python -c "import importlib; m,a='${APP_MODULE:-app.main:app}'.split(':'); getattr(importlib.import_module(m), a)"
+
+  deploy:
+    name: Deploy Demo
+    needs: test
+    # Chi deploy khi push vao main hoac chay tay
+    if: github.event_name == 'push' || github.event_name == 'workflow_dispatch'
+    runs-on: [self-hosted, floci]
+    defaults:
+      run:
+        # Tren runner Windows, bash = Git Bash
+        shell: bash
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Build + deploy
+        run: bash ./deploy/deploy.sh "${GITHUB_SHA::7}"

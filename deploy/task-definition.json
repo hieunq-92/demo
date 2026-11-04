@@ -1,0 +1,20 @@
+{
+  "family": "__FAMILY__",
+  "networkMode": "awsvpc",
+  "requiresCompatibilities": ["FARGATE"],
+  "cpu": "256",
+  "memory": "512",
+  "containerDefinitions": [
+    {
+      "name": "app",
+      "image": "__IMAGE__",
+      "essential": true,
+      "portMappings": [{ "containerPort": __PORT__, "hostPort": __PORT__, "protocol": "tcp" }],
+      "environment": [
+        { "name": "PORT", "value": "__PORT__" },
+        { "name": "ENVIRONMENT", "value": "floci" },
+        { "name": "APP_VERSION", "value": "__TAG__" }
+      ]
+    }
+  ]
+}

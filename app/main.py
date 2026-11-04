@@ -17,7 +17,7 @@ def root() -> dict[str, str]:
 @app.get("/health", tags=["health"])
 def health() -> dict[str, str]:
     return {
-        "status": "ok1234",
+        "status": "demo testing",
         "version": settings.app_version,
         "environment": settings.environment,
     }

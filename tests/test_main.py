@@ -14,7 +14,7 @@ def test_root():
 def test_health():
     resp = client.get("/health")
     assert resp.status_code == 200
-    assert resp.json()["status"] == "ok1234"
+    assert resp.json()["status"] == "demo testing"
 
 
 def test_item_crud():
